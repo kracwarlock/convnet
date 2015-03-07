@@ -27,7 +27,7 @@ Make sure the board is locked before running this.
 
 Run:
 ```
-$ extract_representation -b <board-id> -model <model-file> -feature-config feature_config.pbtxt
+$ extract_representation -b <board-id> -m <model-file> -f feature_config.pbtxt
 ```
 
 ### HDF5 to CSV for submission

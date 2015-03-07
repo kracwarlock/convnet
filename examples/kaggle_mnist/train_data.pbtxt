@@ -1,11 +1,11 @@
 data_config {
-  file_pattern: "/ais/gobi3/u/shikhar/mnist/mnist_kaggle_train.h5"
+  file_pattern: "/ais/gobi3/u/shikhar/mnist/distorted_plus_all.h5"
   layer_name: "input"
   dataset_name: "train"
   data_type: HDF5
 }
 data_config {
-  file_pattern: "/ais/gobi3/u/shikhar/mnist/mnist_kaggle_train.h5"
+  file_pattern: "/ais/gobi3/u/shikhar/mnist/distorted_plus_all.h5"
   layer_name: "output"
   dataset_name: "train_labels"
   data_type: HDF5

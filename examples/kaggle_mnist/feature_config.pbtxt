@@ -1,4 +1,4 @@
-output_file: "output.h5"
+output_file: "/ais/gobi3/u/shikhar/mnist/output.h5"
 
 feature {
   layer: "output"
