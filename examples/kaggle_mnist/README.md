@@ -11,7 +11,8 @@ Combine the training file and distorted file by running:
 $ python join_ubyte_and_dist.py
 ```
 Skip the `CSV to HDF5` step
-You can create more distortions and get better results with a bigger dataset
+
+You can create more distortions and get better results by making the dataset bigger
 
 ### CSV to HDF5
 - Download the data files (train.csv, test.csv) from Kaggle and edit file paths 
