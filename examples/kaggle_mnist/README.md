@@ -1,3 +1,18 @@
+### Elastic Distortions (Optional)
+- Download the training dataset and training labels from http://yann.lecun.com/exdb/mnist/
+
+Run:
+```
+$ python distort.py 
+```
+
+Combine the training file and distorted file by running:
+```
+$ python join_ubyte_and_dist.py
+```
+Skip the `CSV to HDF5` step
+You can create more distortions and get better results with a bigger dataset
+
 ### CSV to HDF5
 - Download the data files (train.csv, test.csv) from Kaggle and edit file paths 
   in `csv_to_hdf5.py`
@@ -9,9 +24,9 @@ $ python csv_to_hdf5.py
 
 ### Training
 - Set the data_dir in all `*_data.pbtxt` so that it points to the directory where
-  the data was downloaded. 
+  the data was downloaded
 - Set the checkpoint directory in net.pbtxt. This is where the model, error
-  stats, logs etc will be written. Make sure this diretory has been created.
+  stats, logs etc will be written. Make sure this diretory has been created
 
 Run:
 ```
@@ -19,7 +34,7 @@ $ train_convnet -b <board-id> -m netconv.pbtxt -t train_data.pbtxt -v val_data.p
 ```
 
 Toronto users-
-Make sure the board is locked before running this.
+Make sure the board is locked before running this
 
 ### Predictions from the model
 - Set output file path in `feature_config.pbtxt`
