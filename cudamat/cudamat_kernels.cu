@@ -1972,3 +1972,65 @@ __global__ void kLSTMOutp(float* s_in, float* s_out, float* d_out, float* dw_dia
     sum_vals[threadIdx.x] = dbo;reduceToSumLocal32(sum_vals, threadIdx.x); __syncthreads(); if (threadIdx.x == 0) db[lstm_id + num_lstms * 3] += sum_vals[0];
   }
 }
+
+
+__global__ void kBNBprop(float* d, float* x, float* gamma, float* mu, float* sigma,
+                         float* target, unsigned int width, unsigned int height, float scale_targets) {
+  extern __shared__ float sum_vals[];
+  const int column = gridDim.x * blockIdx.y + blockIdx.x;
+  if (column < width) {
+    float mu_val = mu[column];
+    float sigma_val = sigma[column];
+    float gamma_val = gamma[column];
+    __syncthreads();
+    float *cur_x = &x[column * height] ; 
+    float *cur_d = &d[column * height] ; 
+    float *cur_target = &target[column * height] ; 
+    float cur_sum = 0, cur_sum2 = 0, val;
+    for (unsigned int i = threadIdx.x; i < height; i += blockDim.x) {
+      cur_sum += (cur_x[i] - mu_val) * cur_d[i];
+    }
+    sum_vals[threadIdx.x] = cur_sum / ((height - 1) * sigma_val * sigma_val);
+    reduceToSumLocal32(sum_vals, threadIdx.x);
+    __syncthreads();
+    cur_sum = sum_vals[0];
+    for (unsigned int i = threadIdx.x; i < height; i += blockDim.x) {
+      val = gamma_val * (cur_d[i] - (cur_x[i] - mu_val) * cur_sum) / sigma_val;
+      cur_sum2 += val;
+      cur_target[i] = scale_targets * cur_target[i] + val;
+    }
+    sum_vals[threadIdx.x] = cur_sum2 / height;
+    reduceToSumLocal32(sum_vals, threadIdx.x);
+    cur_sum = sum_vals[0];
+    for (unsigned int i = threadIdx.x; i < height; i += blockDim.x) {
+      cur_target[i] -= cur_sum;
+    }
+    __syncthreads();
+  }
+}
+
+__global__ void kBNGrad(float* d, float* x, float* mu, float* sigma,
+                        float* dgamma, float* dbeta, unsigned int width, unsigned int height) {
+  extern __shared__ float sum_vals[];
+  const int column = gridDim.x * blockIdx.y + blockIdx.x;
+  if (column < width) {
+    float mu_val = mu[column];
+    float sigma_val = sigma[column];
+    __syncthreads();
+    float *cur_x = &x[column * height] ; 
+    float *cur_d = &d[column * height] ; 
+    float z, d, sum_gamma = 0, sum_beta = 0;
+    for (unsigned int i = threadIdx.x; i < height; i += blockDim.x) {
+      z = (cur_x[i] - mu_val) / sigma_val;
+      d = cur_d[i];
+      sum_gamma += z * d;
+      sum_beta  += d;
+    }
+    sum_vals[threadIdx.x] = sum_gamma; reduceToSumLocal32(sum_vals, threadIdx.x); __syncthreads();
+    if (threadIdx.x == 0) dgamma[column] = sum_vals[0];
+    __syncthreads();
+    sum_vals[threadIdx.x] = sum_beta; reduceToSumLocal32(sum_vals, threadIdx.x); __syncthreads();
+    if (threadIdx.x == 0) dbeta[column] = sum_vals[0];
+    __syncthreads();
+  }
+}

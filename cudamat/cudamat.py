@@ -1351,6 +1351,20 @@ class CUDAMatrix(object):
 
         return target
 
+    def apply_relu_squash(self, target = None, lambdaa=2.0):
+        """
+        target = 2 / (1 + exp(-self * lambda)) - 1
+        """
+
+        if not target:
+            target = self
+
+        err_code = _cudamat.apply_relu_squash(self.p_mat, target.p_mat, ct.c_float(lambdaa))
+        if err_code:
+            raise generate_exception(err_code)
+
+        return target
+
     def dot(self, mat2, mult=1.0, target = None):
         """
         Multiply the matrix by mat2 from the right and multiply by scalar mult.
