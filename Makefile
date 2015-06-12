@@ -2,9 +2,9 @@
 # Set path to dependencies.
 # Path to protocol buffers, hdf5.
 # OPENBLAS needs to be set only if openblas=yes.
-INC=$(HOME)/local/include
-LIB=$(HOME)/local/lib
-LOCAL_BIN=$(HOME)/local/bin
+INC=$(HOME)/latest-local/include
+LIB=$(HOME)/latest-local/lib
+LOCAL_BIN=$(HOME)/latest-local/bin
 
 # CUDA.
 CUDA_ROOT=/pkgs_local/cuda-5.5

@@ -21,10 +21,12 @@ Dependencies
 - OpenCV
   Download the source code https://github.com/Itseez/opencv/archive/3.0.0-alpha.zip
   To quick install -
-  $ cmake-gui, set CMAKE_BUILD_TYPE to Release
-  $ cd build directory
+  $ cd opencv-3.0.0-alpha
+  $ mkdir build
+  $ cd build
+  $ cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=~/local ..
   $ make -j7
-  $ sudo make install
+  $ make install
 
 - libjpeg
   This is often present on standard operating systems since it is used by a lot of programs.
